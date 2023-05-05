@@ -1,0 +1,12 @@
+# This file intentionally left blank
+
+#NO_DEBUG = yes
+#NO_PRINT = yes
+#NO_ACTION_LAYER = yes
+#NO_ACTION_TAPPING = yes
+#NO_ACTION_ONESHOT = yes
+#NO_ACTION_MACRO = yes
+
+KEYBOARD_SHARED_EP = yes
+
+OPT_DEFS += -DCORTEX_ENABLE_WFI_IDLE=TRUE
