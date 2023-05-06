@@ -1,3 +1,7 @@
+VIA_ENABLE = yes
+
+BOOTMAGIC_ENABLE = lite
+
 # https://github.com/samhocevar-forks/qmk-firmware/blob/master/docs/ja/config_options.md
 LTO_ENABLE = yes
 
