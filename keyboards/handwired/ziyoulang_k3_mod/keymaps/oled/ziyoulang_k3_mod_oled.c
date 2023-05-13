@@ -1,34 +1,35 @@
 // Copyright 2023 Coom (@coomstoolbox)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
-//#include <stdio.h>
-//#include <string.h>
+#include <stdio.h>
 
 #include QMK_KEYBOARD_H
 
-// #ifdef CONSOLE_ENABLE
-//   #include <print.h>
-// #endif
+#ifdef CONSOLE_ENABLE
+   #include <print.h>
+#endif
 
-// void keyboard_post_init_user(void) {
+void keyboard_post_init_user(void) {
 
-//   // Customise these values to desired behaviour
-//   debug_enable=true;
-//   debug_matrix=true;
-//   //debug_keyboard=true;
-//   //debug_mouse=true;
+  // Customise these values to desired behaviour
+#ifdef CONSOLE_ENABLE
+  debug_enable=true;
+  debug_matrix=true;
+#endif
+  //debug_keyboard=true;
+  //debug_mouse=true;
 
-// }
+}
 
 static uint16_t last_keycode = KC_NO;
 static uint16_t last_col = 0;
 static uint16_t last_row = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//   // コンソールが有効化されている場合、マトリックス上の位置とキー押下状態を出力します
-// #ifdef CONSOLE_ENABLE
-//     uprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
-// #endif 
+   // コンソールが有効化されている場合、マトリックス上の位置とキー押下状態を出力します
+#ifdef CONSOLE_ENABLE
+    uprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
+#endif
     if (record->event.pressed) {
         if (last_keycode != keycode) {
             last_keycode = keycode;
@@ -68,8 +69,14 @@ bool oled_task_user(void) {
             oled_write_P(PSTR("Default\n"), false);
             break;
         case 1:
-            oled_write_P(PSTR("PU PD\n"), false);
+            oled_write_P(PSTR("2\n"), false);
             break;
+        case 2:
+            oled_write_P(PSTR("3\n"), false);
+            break;
+//        case 3:
+//            oled_write_P(PSTR("4\n"), false);
+//            break;
         default:
             // Or use the write_ln shortcut over adding '\n' to the end of your string
             oled_write_ln_P(PSTR("Undefined"), false);
@@ -77,13 +84,29 @@ bool oled_task_user(void) {
 
     // Host Keyboard LED Status
     led_t led_state = host_keyboard_led_state();
-    oled_write_P(led_state.num_lock ? PSTR("NUM ") : PSTR("    "), false);
-    oled_write_P(led_state.caps_lock ? PSTR("CAP ") : PSTR("    "), false);
-    oled_write_ln_P(led_state.scroll_lock ? PSTR("SCR ") : PSTR("    "), false);
+    if (led_state.num_lock) {
+        oled_write_P(PSTR("NUM"), true);
+        oled_write_P(PSTR(" "), false);
+    } else {
+        oled_write_P(PSTR("    "), false);
+    }
+    if (led_state.caps_lock) {
+        oled_write_P(PSTR("CAP"), true);
+        oled_write_P(PSTR(" "), false);
+    } else {
+        oled_write_P(PSTR("    "), false);
+    }
+    if (led_state.scroll_lock) {
+        oled_write_P(PSTR("SCR"), true);
+        oled_write_ln_P(PSTR(" "), false);
+    } else {
+        oled_write_ln_P(PSTR("    "), false);
+    }
 
     // Last Key pressed info
     oled_write_P(PSTR("kc: "), false);
-    if (last_keycode == 21025) {
+//    if (last_keycode == 21025) {
+    if (last_keycode > 21000) {
       oled_write_P(PSTR("Fn"), false);
     } else {
       oled_write_P(get_u16_str(last_keycode, ' '), false);
